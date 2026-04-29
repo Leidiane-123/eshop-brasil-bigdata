@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  # Serviço 1: Banco de Dados NoSQL
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb_eshop
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - eshop_network
+
+  # Serviço 2: Aplicação Web (Seu código Python)
+  webapp:
+    build: .
+    container_name: streamlit_eshop
+    ports:
+      - "8501:8501"
+    depends_on:
+      - mongodb
+    environment:
+      - MONGO_URI=mongodb://mongodb:27017/
+    networks:
+      - eshop_network
+
+# Definição de volume para persistência de dados (Big Data)
+volumes:
+  mongo_data:
+
+# Rede interna para comunicação entre os contêineres
+networks:
+  eshop_network:
+    driver: bridge
